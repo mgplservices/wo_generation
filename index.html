@@ -1,10 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="refresh" content="0; URL='https://script.google.com/macros/s/AKfycbxInGil66uWV175sVVRQIrfWdyJ_DVcDYQlgs4Iy1Kk7wJ67G-9Tf3ZoexZ7jhYujP6/exec'" />
-    <title>Redirecting...</title>
-  </head>
-  <body>
-    <p>Redirecting to the web app...</p>
-  </body>
+<head>
+  <title>Step Buttons</title>
+  <style>
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="step1">Step 1</button>
+  <button id="step2" style="display:none;">Step 2</button>
+  <button id="final" style="display:none;">Go to Page</button>
+
+  <script>
+    document.getElementById("step1").addEventListener("click", function() {
+      this.style.display = "none";
+      document.getElementById("step2").style.display = "inline-block";
+    });
+
+    document.getElementById("step2").addEventListener("click", function() {
+      this.style.display = "none";
+      document.getElementById("final").style.display = "inline-block";
+    });
+
+    document.getElementById("final").addEventListener("click", function() {
+      window.location.href = "https://script.google.com/macros/s/AKfycbxInGil66uWV175sVVRQIrfWdyJ_DVcDYQlgs4Iy1Kk7wJ67G-9Tf3ZoexZ7jhYujP6/exec"; // your actual page
+    });
+  </script>
+
+</body>
 </html>
