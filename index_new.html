@@ -17,12 +17,10 @@
   <div id="todayDataSection">Loading...</div>
 
   <script>
-    async function loadData() {
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbzNfdyd38YJMs5H0QppOg1celWyUxQbvmzmjsvClx5bLyireZYszQCSJhCLLOyyW9XH/exec");
-        const text = await response.text();
-        const data = JSON.parse(text);
-        const section = document.getElementById("todayDataSection"); 
+
+    // JSONP callback
+    function showData(data) {
+      const section = document.getElementById("todayDataSection"); 
 
 
         if (!data || !Array.isArray(data.rows)) {
@@ -123,14 +121,16 @@
             finalHTML += buildTable("Other", otherRows);
 
             section.innerHTML = finalHTML;
-      } catch (err) {
-        section.innerHTML = "Error loading data.";
-        console.error(err);
-      }
     }
 
-    // Load automatically on page load
-    window.onload = loadData;
+    // Inject Apps Script JSONP endpoint
+    window.onload = function() {
+      const script = document.createElement("script");
+      script.src = "https://script.google.com/macros/s/AKfycbzNfdyd38YJMs5H0QppOg1celWyUxQbvmzmjsvClx5bLyireZYszQCSJhCLLOyyW9XH/exec?callback=showData";
+      document.body.appendChild(script);
+    };
+
+  
   </script>
 </body>
 </html>
