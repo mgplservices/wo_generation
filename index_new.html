@@ -1,36 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Step Buttons</title>
+  <base target="_top">
   <style>
+    body { font-family: Arial, sans-serif; padding: 20px; font-size: 26px;}
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin: 10px;
+      background-color: #4CAF50; color: white; border: none;
+      padding: 10px 20px; font-size: 36px; cursor: pointer; border-radius: 5px;
     }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    #status { margin-top: 20px; font-weight: bold;font-size: 26px; }
   </style>
 </head>
 <body>
-
-  <button id="step1">Step 1</button>
-  <button id="step2" style="display:none;">Step 2</button>
-  <button id="final" style="display:none;">Go to Page</button>
+  <h2>📊 WIP Data Merge</h2>
+  <div id="todayDataSection">Loading...</div>
 
   <script>
-    document.getElementById("step1").addEventListener("click", function() {
-      this.style.display = "none";
-      document.getElementById("step2").style.display = "inline-block";
-    });
+    async function loadData() {
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwDBVE2fDRoE6-KtR-_bATEjwOKxa9cZOA2MKjm4r8EpVsMvo06jrIoaYgTgVnea_uW/exec");
+        const data = await response.json();
+        const section = document.getElementById("todayDataSection"); 
 
-    document.getElementById("step2").addEventListener("click", function() {
-      this.style.display = "none";
-      document.getElementById("final").style.display = "inline-block";
-    });
+        if (!data || !Array.isArray(data.rows)) {
+              section.innerHTML = "❌ Invalid data format.";
+              return;
+            }
 
-    document.getElementById("final").addEventListener("click", function() {
-      window.location.href = "https://script.google.com/macros/s/AKfycbxInGil66uWV175sVVRQIrfWdyJ_DVcDYQlgs4Iy1Kk7wJ67G-9Tf3ZoexZ7jhYujP6/exec"; // your actual page
-    });
+            if (data.rows.length === 0) {
+              section.innerHTML = "📭 No entries found for today.";
+              return;
+            }
+
+            const categoryIndex = data.headers.indexOf("Category");
+
+            const jhookRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE (J HOOK)");
+            const prognpRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE (P)"); 
+            const npRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE"); 
+            const retainerRows = data.rows.filter(row => row[categoryIndex] === "RETAINER"); 
+            const otherRows = data.rows.filter(row => row[categoryIndex] === "Other"); 
+
+
+            const buildTable = (title, rows) => {
+              let tableHTML = `<h3>${title}</h3>`;
+              tableHTML += "<table><thead><tr>";
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PART NO</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>GREEN LEVEL</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>FG QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PLATING WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>TAPPING WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>CNC WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PRESSING WIP QTY</th>`;
+              tableHTML += "</tr></thead><tbody>";
+
+              // Decide your display order (0-based index, without last col)
+            const displayOrder = [0, 6, 1, 5, 4, 3, 2]; 
+
+            rows.forEach(row => {
+              const status = row[row.length - 1]; // last column = Status
+              
+              let bgColor = "white";
+              let fontColor = "black";
+              let fontWeight = "normal";
+
+              // pick colors by status
+              switch (status) {
+                case "Red":    
+                  bgColor = "lightcoral"; 
+                  fontColor = "white"; 
+                  break;
+                case "Yellow": 
+                  bgColor = "khaki";      
+                  fontColor = "black"; 
+                  break;
+                case "Green":  
+                  bgColor = "lightgreen"; 
+                  fontColor = "black"; 
+                  break;
+                case "White":  
+                  bgColor = "white";      
+                  fontColor = "black"; 
+                  break;
+                case "Black":  
+                  bgColor = "black";      
+                  fontColor = "white"; 
+                  fontWeight = "bold";   // ✅ bold only for black background
+                  break;
+              }
+
+              tableHTML += "<tr>";
+
+               displayOrder.forEach((colIndex, idx) => {
+                if (idx === 2) {
+                  // apply bg + font + bold (only if black)
+                  tableHTML += `<td style='border: 1px solid #333; padding: 6px;
+                                          background:${bgColor}; color:${fontColor};
+                                          font-weight:${fontWeight};'>
+                                  ${row[colIndex] ?? ""}
+                                </td>`;
+                } else {
+                  tableHTML += `<td style='border: 1px solid #333; padding: 6px;'>
+                                  ${row[colIndex] ?? ""}
+                                </td>`;
+                }
+              });
+
+              tableHTML += "</tr>";
+            });
+              tableHTML += "</tbody></table>";
+              return tableHTML;
+            };
+
+
+            let finalHTML = "";
+            finalHTML += buildTable("NUTPLATE (J HOOK)", jhookRows);
+            finalHTML += buildTable("NUTPLATE (P)", prognpRows);
+            finalHTML += buildTable("NUTPLATE", npRows);
+            finalHTML += buildTable("RETAINER", retainerRows);
+            finalHTML += buildTable("Other", otherRows);
+
+            section.innerHTML = finalHTML;
+      } catch (err) {
+        section.innerHTML = "Error loading data.";
+        console.error(err);
+      }
+    }
+
+    // Load automatically on page load
+    window.onload = loadData;
   </script>
-
 </body>
 </html>
+
