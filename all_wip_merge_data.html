@@ -1,81 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Main Dashboard</title>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ mobile scaling -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 10px; 
+      font-size: 16px;   /* ✅ smaller for mobile */
     }
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; margin-top: 20px; }
+    table { 
+      border-collapse: collapse; 
+      width: 100%; 
+      margin-bottom: 20px; 
+      font-size: 14px; /* ✅ smaller table font */
     }
-    .block {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    th, td { 
+      border: 1px solid #333; 
+      padding: 6px; 
+      text-align: left; 
     }
-    .full-width {
-      grid-column: 1 / span 2;
+    button {
+      background-color: #4CAF50; color: white; border: none;
+      padding: 10px 20px; font-size: 18px; cursor: pointer; border-radius: 5px;
     }
-    h2 {
-      margin-top: 0;
-      font-size: 18px;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 8px;
-    }
-    .menu-boxes {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .menu-box {
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 12px;
-      background: #fafafa;
-      text-align: center;
-      transition: background 0.2s ease, transform 0.1s ease;
-      cursor: pointer;
-      font-weight: bold;
-      color: #333;
-      text-decoration: none;
-    }
-    .menu-box:hover {
-      background: #e8f0fe;
-      transform: scale(1.02);
-    }
-    @media(max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .full-width {
-        grid-column: 1;
-      }
-    }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    #status { margin-top: 20px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
+  <h2>📊 WIP Data Merge</h2>
+  <div id="todayDataSection">Loading...</div>
 
-  <div class="container">
+  <script>
 
-    <!-- Block 3: WIP DATA -->
-    <div class="block full-width">
-      <h2>WO GENERATION</h2>
-      <div class="menu-boxes">
-        <a class="menu-box" href="https://script.google.com/macros/s/AKfycbzmJ-BIX45SQ4hYE_6u4DetRGKOSOwG1R6-_Pxgnimjv5uy5hRJ22nns6VfZIpo2Olu/exec">VIEW MERGED WIP & FG DATA</a>
-        
-      </div>
-    </div>
-  </div>
+    // JSONP callback
+    function showData(data) {
+      const section = document.getElementById("todayDataSection"); 
 
+
+        if (!data || !Array.isArray(data.rows)) {
+              section.innerHTML = "❌ Invalid data format.";
+              return;
+            }
+
+            if (data.rows.length === 0) {
+              section.innerHTML = "📭 No entries found for today.";
+              return;
+            }
+
+            const categoryIndex = data.headers.indexOf("Category");
+
+            const jhookRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE (J HOOK)");
+            const prognpRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE (P)"); 
+            const npRows = data.rows.filter(row => row[categoryIndex] === "NUTPLATE"); 
+            const retainerRows = data.rows.filter(row => row[categoryIndex] === "RETAINER"); 
+            const otherRows = data.rows.filter(row => row[categoryIndex] === "Other"); 
+
+
+            const buildTable = (title, rows) => {
+              let tableHTML = `<h3>${title}</h3>`;
+              tableHTML += "<table><thead><tr>";
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PART NO</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>GREEN LEVEL</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>FG QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PLATING WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>TAPPING WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>CNC WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PRESSING WIP QTY</th>`;
+              tableHTML += "</tr></thead><tbody>";
+
+              // Decide your display order (0-based index, without last col)
+            const displayOrder = [0, 6, 1, 5, 4, 3, 2]; 
+
+            rows.forEach(row => {
+              const status = row[row.length - 1]; // last column = Status
+              
+              let bgColor = "white";
+              let fontColor = "black";
+              let fontWeight = "normal";
+
+              // pick colors by status
+              switch (status) {
+                case "Red":    
+                  bgColor = "lightcoral"; 
+                  fontColor = "white"; 
+                  break;
+                case "Yellow": 
+                  bgColor = "khaki";      
+                  fontColor = "black"; 
+                  break;
+                case "Green":  
+                  bgColor = "lightgreen"; 
+                  fontColor = "black"; 
+                  break;
+                case "White":  
+                  bgColor = "white";      
+                  fontColor = "black"; 
+                  break;
+                case "Black":  
+                  bgColor = "black";      
+                  fontColor = "white"; 
+                  fontWeight = "bold";   // ✅ bold only for black background
+                  break;
+              }
+
+              tableHTML += "<tr>";
+
+               displayOrder.forEach((colIndex, idx) => {
+                if (idx === 2) {
+                  // apply bg + font + bold (only if black)
+                  tableHTML += `<td style='border: 1px solid #333; padding: 6px;
+                                          background:${bgColor}; color:${fontColor};
+                                          font-weight:${fontWeight};'>
+                                  ${row[colIndex] ?? ""}
+                                </td>`;
+                } else {
+                  tableHTML += `<td style='border: 1px solid #333; padding: 6px;'>
+                                  ${row[colIndex] ?? ""}
+                                </td>`;
+                }
+              });
+
+              tableHTML += "</tr>";
+            });
+              tableHTML += "</tbody></table>";
+              return tableHTML;
+            };
+
+
+            let finalHTML = "";
+            finalHTML += buildTable("NUTPLATE (J HOOK)", jhookRows);
+            finalHTML += buildTable("NUTPLATE (P)", prognpRows);
+            finalHTML += buildTable("NUTPLATE", npRows);
+            finalHTML += buildTable("RETAINER", retainerRows);
+            finalHTML += buildTable("Other", otherRows);
+
+            section.innerHTML = finalHTML;
+    }
+
+    // Inject Apps Script JSONP endpoint
+    window.onload = function() {
+      const script = document.createElement("script");
+      script.src = "https://script.google.com/macros/s/AKfycbzNc4NOU8Qrop0RfR58kpFyDVcRjv-OiG8xjow2MAXH2pDPG-01c_25X6FXr7Y0wO7gyQ/exec?callback=showData";
+      document.body.appendChild(script);
+    };
+
+  
+  </script>
 </body>
 </html>
