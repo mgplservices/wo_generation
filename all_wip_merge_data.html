@@ -70,10 +70,11 @@
               tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>TAPPING WIP QTY</th>`;
               tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>CNC WIP QTY</th>`;
               tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>PRESSING WIP QTY</th>`;
+              tableHTML += `<th style='border: 1px solid #333; padding: 6px; text-align: left;'>TOTAL FG + WIP QTY</th>`;
               tableHTML += "</tr></thead><tbody>";
 
               // Decide your display order (0-based index, without last col)
-            const displayOrder = [0, 6, 1, 5, 4, 3, 2]; 
+            const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9]; 
 
             rows.forEach(row => {
               const status = row[row.length - 1]; // last column = Status
@@ -110,7 +111,7 @@
               tableHTML += "<tr>";
 
                displayOrder.forEach((colIndex, idx) => {
-                if (idx === 2) {
+                if (idx === 2 || idx === 7) {
                   // apply bg + font + bold (only if black)
                   tableHTML += `<td style='border: 1px solid #333; padding: 6px;
                                           background:${bgColor}; color:${fontColor};
@@ -144,7 +145,7 @@
     // Inject Apps Script JSONP endpoint
     window.onload = function() {
       const script = document.createElement("script");
-      script.src = "https://script.google.com/macros/s/AKfycbzNc4NOU8Qrop0RfR58kpFyDVcRjv-OiG8xjow2MAXH2pDPG-01c_25X6FXr7Y0wO7gyQ/exec?callback=showData";
+      script.src = "https://script.google.com/macros/s/AKfycbxFKJsd9aFgVdry4FmBNSR_-m4hca7wHg89vjoCJMK9F1fpCxh5QXgyxa_qzkDCv695Ig/exec?callback=showData";
       document.body.appendChild(script);
     };
 
