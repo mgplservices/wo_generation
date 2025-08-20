@@ -111,14 +111,15 @@
               tableHTML += "<tr>";
 
                displayOrder.forEach((colIndex, idx) => {
-                if (idx === 2) {
-                  // apply bg + font + bold (only if black)
-                  tableHTML += `<td style='border: 1px solid #333; padding: 6px;
-                                          background:${bgColor}; color:${fontColor};
-                                          font-weight:${fontWeight};'>
-                                  ${row[colIndex] ?? ""}
-                                </td>`;
-                }
+                  if (idx === 2 ) {
+                    // apply bg + font + bold (only if black) 
+                    tableHTML += <td style='border: 1px solid #333; padding: 6px; 
+                      background:${bgColor}; color:${fontColor}; 
+                    font-weight:${fontWeight};'> 
+                      ${row[colIndex] ?? ""} 
+                    </td>; 
+                      }
+                    
                 else {
                   tableHTML += `<td style='border: 1px solid #333; padding: 6px;'>
                                   ${row[colIndex] ?? ""}
