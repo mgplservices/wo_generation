@@ -111,7 +111,7 @@
               tableHTML += "<tr>";
 
                displayOrder.forEach((colIndex, idx) => {
-                if ([2, 7].includes(colIndex)) {
+                if (idx === 2) {
                   // apply bg + font + bold (only if black)
                   tableHTML += `<td style='border: 1px solid #333; padding: 6px;
                                           background:${bgColor}; color:${fontColor};
