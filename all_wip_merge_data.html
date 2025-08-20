@@ -77,7 +77,7 @@
             const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9]; 
 
             rows.forEach(row => {
-              const status = row[row.length - 1]; // last column = Status
+              const status = row[row.length - 2]; // last column = Status
               
               let bgColor = "white";
               let fontColor = "black";
@@ -111,7 +111,7 @@
               tableHTML += "<tr>";
 
                displayOrder.forEach((colIndex, idx) => {
-                  if (idx === 2 ) {
+                  if (idx === 2 || idx === 7 ) {
                     // apply bg + font + bold (only if black) 
                     tableHTML += `<td style='border: 1px solid #333; padding: 6px; 
                       background:${bgColor}; color:${fontColor}; 
