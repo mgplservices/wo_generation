@@ -74,14 +74,18 @@
               tableHTML += "</tr></thead><tbody>";
 
               // Decide your display order (0-based index, without last col)
-            const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9]; 
+            const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9, 10]; 
 
             rows.forEach(row => {
-              const status = row[row.length - 2]; // last column = Status
+              const status = row[row.length - 3]; // last column = Status
+              const all_status = row[row.length - 1]; // last column = Status
               
               let bgColor = "white";
               let fontColor = "black";
               let fontWeight = "normal";
+              let all_bgColor = "white";
+              let all_fontColor = "black";
+              let all_fontWeight = "normal";
 
               // pick colors by status
               switch (status) {
@@ -108,10 +112,35 @@
                   break;
               }
 
+                // pick colors by status
+              switch (all_status) {
+                case "Red":    
+                  all_bgColor = "lightcoral"; 
+                  all_fontColor = "white"; 
+                  break;
+                case "Yellow": 
+                  all_bgColor = "khaki";      
+                  all_fontColor = "black"; 
+                  break;
+                case "Green":  
+                  all_bgColor = "lightgreen"; 
+                  all_fontColor = "black"; 
+                  break;
+                case "White":  
+                  all_bgColor = "white";      
+                  all_fontColor = "black"; 
+                  break;
+                case "Black":  
+                  all_bgColor = "black";      
+                  all_fontColor = "white"; 
+                  all_fontWeight = "bold";   // ✅ bold only for black background
+                  break;
+              }
+
               tableHTML += "<tr>";
 
                displayOrder.forEach((colIndex, idx) => {
-                  if (idx === 2 || idx === 7 ) {
+                  if (idx === 2 ) {
                     // apply bg + font + bold (only if black) 
                     tableHTML += `<td style='border: 1px solid #333; padding: 6px; 
                       background:${bgColor}; color:${fontColor}; 
@@ -119,7 +148,14 @@
                       ${row[colIndex] ?? ""} 
                     </td>`; 
                       }
-                    
+                    else if (idx === 7 ) {
+                    // apply bg + font + bold (only if black) 
+                    tableHTML += `<td style='border: 1px solid #333; padding: 6px; 
+                      background:${all_bgColor}; color:${all_fontColor}; 
+                    font-weight:${all_fontWeight};'> 
+                      ${row[colIndex] ?? ""} 
+                    </td>`; 
+                      }
                 else {
                   tableHTML += `<td style='border: 1px solid #333; padding: 6px;'>
                                   ${row[colIndex] ?? ""}
@@ -147,7 +183,7 @@
     // Inject Apps Script JSONP endpoint
     window.onload = function() {
       const script = document.createElement("script");
-      script.src = "https://script.google.com/macros/s/AKfycbxFKJsd9aFgVdry4FmBNSR_-m4hca7wHg89vjoCJMK9F1fpCxh5QXgyxa_qzkDCv695Ig/exec?callback=showData";
+      script.src = "https://script.google.com/macros/s/AKfycbxoVRPwb0LB-l4tIXH8qxTukhx71-fKbbhiWl0XloXLKf2e9NlhqdD2-sAgP1ryVEJDhw/exec?callback=showData";
       document.body.appendChild(script);
     };
 
