@@ -75,9 +75,10 @@
 
               // Decide your display order (0-based index, without last col)
             const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9]; 
+            //const displayOrder = [1, 3, 4, 5, 6, 7, 8, 9]; 
 
             rows.forEach(row => {
-              const status = row[row.length - 3]; // last column = Status
+              const status = row[row.length - 3]; // last column = Status replace with 3
               const all_status = row[row.length - 1]; // last column = Status
               
               let bgColor = "white";
@@ -183,7 +184,7 @@
     // Inject Apps Script JSONP endpoint
     window.onload = function() {
       const script = document.createElement("script");
-      script.src = "https://script.google.com/macros/s/AKfycbzWmtcRI47pVpOqkaib56TAWDp6Flhcov1BsSB-kVVpqwLWz992cDoU_UqCS5t6Mf--Uw/exec?callback=showData";  
+      script.src = "https://script.google.com/macros/s/AKfycbxySAjEPrj2yQLMMEtoSpC3xN2eMRyz92G5Lxy7y0WXKs1GTB3AhF2NRwUnvrLAM7cYTA/exec?callback=showData";  
       document.body.appendChild(script);
     };
 
