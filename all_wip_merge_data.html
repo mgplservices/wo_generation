@@ -74,7 +74,7 @@
               tableHTML += "</tr></thead><tbody>";
 
               // Decide your display order (0-based index, without last col)
-            const displayOrder = [0, 6, 1, 5, 4, 3, 2, 9]; 
+            const displayOrder = [0, 6, 1, 4, 5, 3, 2, 9]; 
             //const displayOrder = [1, 3, 4, 5, 6, 7, 8, 9]; 
 
             rows.forEach(row => {
@@ -184,7 +184,7 @@
     // Inject Apps Script JSONP endpoint
     window.onload = function() {
       const script = document.createElement("script");
-      script.src = "https://script.google.com/macros/s/AKfycbz7Nz1-3e3n8FlfrtWi4Gl8V72kfynzGsw-SExZ5URmQWU_R-XqgTx1No0rEAZ8Ds2Scw/exec?callback=showData";  
+      script.src = "https://script.google.com/macros/s/AKfycbxf4_ygEaFMpNNKgbl_MhxegnQR4WvXVq_fgVUMqX_GBCRD5D3Ouae57kzgw1x3vhdLbQ/exec?callback=showData";  
       document.body.appendChild(script);
     };
 
